@@ -81,7 +81,10 @@ main { height: calc(100vh - 49px); }
   padding: 10px;
   border-bottom: 1px solid var(--border);
   font-size: 13px;
+  cursor: pointer;
 }
+
+#victim-list li:hover { background: rgba(255, 255, 255, 0.03); }
 
 #victim-list .name { font-weight: 600; }
 #victim-list .meta { color: var(--muted); font-size: 12px; margin-top: 2px; }
@@ -137,6 +140,74 @@ main { height: calc(100vh - 49px); }
   padding: 4px 8px;
 }
 .delete-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay.open { display: flex; }
+
+.modal {
+  position: relative;
+  width: min(560px, 90vw);
+  max-height: 80vh;
+  overflow-y: auto;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+.modal-close:hover { color: var(--text); }
+
+.detail-title { font-size: 18px; font-weight: 700; margin: 0 0 4px; }
+.detail-meta { color: var(--muted); font-size: 13px; margin-bottom: 16px; }
+
+.detail-section { margin-top: 18px; }
+.detail-section h3 {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 8px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 6px;
+}
+
+.detail-empty { color: var(--muted); font-size: 13px; font-style: italic; }
+
+.snapshot { font-size: 13px; margin-bottom: 10px; }
+.snapshot .ip { font-weight: 600; }
+.snapshot .ports { color: var(--muted); }
+
+.cve-list { list-style: none; margin: 6px 0 0; padding: 0; }
+.cve-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 13px;
+}
+
+.press-list { list-style: none; margin: 0; padding: 0; font-size: 13px; }
+.press-list li { padding: 3px 0; }
+.press-list a { color: var(--text); }
 
 .ping {
   border-radius: 50%;

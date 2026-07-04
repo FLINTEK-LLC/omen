@@ -111,6 +111,7 @@ function addVictimMarker(victim, animate) {
     fillOpacity: animate ? 0.8 : 0.6,
   }).addTo(victimLayer);
   marker.bindTooltip(`${victim.VictimName} — ${victim.GroupName} (${victim.Country})`);
+  marker.on("click", () => openVictimDetail(victim.ID));
 
   if (animate) {
     // The "ping" CSS animation is one-shot (not infinite), so it stops on
@@ -128,6 +129,7 @@ function victimListItem(victim) {
     <div class="name">${escapeHtml(victim.VictimName || "Unknown")}</div>
     <div class="meta">${escapeHtml(victim.GroupName || "")} · ${escapeHtml(victim.Country || "??")} · ${escapeHtml(victim.AttackDate || "")}</div>
   `;
+  li.addEventListener("click", () => openVictimDetail(victim.ID));
   return li;
 }
 
@@ -157,6 +159,76 @@ async function loadRecentVictims() {
   if (!res.ok) return;
   const victims = await res.json();
   (victims || []).forEach(appendVictim);
+}
+
+async function openVictimDetail(id) {
+  const overlay = document.getElementById("victim-modal");
+  const body = document.getElementById("victim-modal-body");
+  body.innerHTML = "Loading&hellip;";
+  overlay.classList.add("open");
+
+  const res = await fetch(`/api/victims/${encodeURIComponent(id)}`);
+  if (!res.ok) {
+    body.innerHTML = `<p class="detail-empty">Could not load victim detail.</p>`;
+    return;
+  }
+  body.innerHTML = renderVictimDetail(await res.json());
+}
+
+function closeVictimDetail() {
+  document.getElementById("victim-modal").classList.remove("open");
+}
+
+function renderVictimDetail(detail) {
+  const press = detail.PressLinks || [];
+  const snapshots = detail.shodan_snapshots || [];
+  const kevMatches = detail.kev_matches || [];
+
+  const pressHtml = press.length
+    ? `<ul class="press-list">${press.map((l) =>
+        `<li><a href="${escapeHtml(l)}" target="_blank" rel="noopener">${escapeHtml(l)}</a></li>`
+      ).join("")}</ul>`
+    : `<p class="detail-empty">No press coverage recorded.</p>`;
+
+  const shodanHtml = snapshots.length
+    ? snapshots.map((s) => `
+        <div class="snapshot">
+          <div class="ip">${escapeHtml(s.IP || "unknown IP")}</div>
+          <div class="ports">Ports: ${(s.Ports || []).join(", ") || "none observed"}</div>
+          ${(s.CVEs || []).length
+            ? `<ul class="cve-list">${s.CVEs.map((c) => `<li>${escapeHtml(c)}</li>`).join("")}</ul>`
+            : ""}
+        </div>
+      `).join("")
+    : `<p class="detail-empty">No Shodan data (enrichment is disabled without a Shodan API key, or this victim has no resolved domain).</p>`;
+
+  const kevHtml = kevMatches.length
+    ? `<ul class="cve-list">${kevMatches.map((m) =>
+        `<li><span class="badge kev">KEV</span> ${escapeHtml(m.CVEID)} — added to KEV ${escapeHtml(m.KEVAdded || "unknown date")}</li>`
+      ).join("")}</ul>`
+    : `<p class="detail-empty">No known-exploited-vulnerability matches.</p>`;
+
+  return `
+    <h2 class="detail-title">${escapeHtml(detail.VictimName || "Unknown")}</h2>
+    <div class="detail-meta">
+      ${escapeHtml(detail.GroupName || "")} · ${escapeHtml(detail.Country || "??")} · ${escapeHtml(detail.AttackDate || "")}${detail.Domain ? ` · ${escapeHtml(detail.Domain)}` : ""}
+    </div>
+
+    <div class="detail-section">
+      <h3>Press Coverage</h3>
+      ${pressHtml}
+    </div>
+
+    <div class="detail-section">
+      <h3>Shodan Exposure</h3>
+      ${shodanHtml}
+    </div>
+
+    <div class="detail-section">
+      <h3>Known Exploited Vulnerabilities (CISA KEV)</h3>
+      ${kevHtml}
+    </div>
+  `;
 }
 
 async function loadStats() {
@@ -235,10 +307,22 @@ function initWatchlistForm() {
   });
 }
 
+function initVictimModal() {
+  const overlay = document.getElementById("victim-modal");
+  document.getElementById("victim-modal-close").addEventListener("click", closeVictimDetail);
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) closeVictimDetail();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeVictimDetail();
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   initMap();
   initTabs();
   initWatchlistForm();
+  initVictimModal();
   loadRecentVictims();
   loadStats();
   loadWatchlist();
