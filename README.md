@@ -36,6 +36,17 @@ supply a Shodan key:
 SHODAN_API_KEY=yourkey docker compose up --build
 ```
 
+If port 8080 is already in use on the host, override it with `OMEN_PORT`
+(the container still listens on 8080 internally, only the host-side mapping
+changes):
+
+```sh
+OMEN_PORT=9090 docker compose up -d --build
+```
+
+Both `SHODAN_API_KEY` and `OMEN_PORT` can also go in a `.env` file next to
+`docker-compose.yml` instead of being passed inline.
+
 To use a custom `config.yaml` instead of the bundled sample, uncomment the
 config bind mount and `command` override in `docker-compose.yml`.
 
@@ -43,7 +54,7 @@ Building/running the image directly, without compose:
 
 ```sh
 docker build -t omen .
-docker run -p 8080:8080 -v omen-data:/app/data -e SHODAN_API_KEY=yourkey omen
+docker run -p 9090:8080 -v omen-data:/app/data -e SHODAN_API_KEY=yourkey omen
 ```
 
 ## Configuration

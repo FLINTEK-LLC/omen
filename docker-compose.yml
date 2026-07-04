@@ -3,7 +3,7 @@ services:
     build: .
     image: omen:latest
     ports:
-      - "8080:8080"
+      - "${OMEN_PORT:-8080}:8080"
     volumes:
       - omen-data:/app/data
       # Uncomment to use a custom config instead of the bundled sample
