@@ -71,11 +71,11 @@ let map, victimLayer;
 const seenIds = new Set();
 
 function initMap() {
-  map = L.map("map", { worldCopyJump: true }).setView([20, 0], 2);
-  // "nolabels" variant: no baked-in place names (which render in inconsistent,
-  // mixed languages at low zoom) -- our own victim pins/tooltips are the
-  // only labels on the map.
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png", {
+  // Zoom 3 (rather than the whole-world 2) avoids the zoomed-all-the-way-out
+  // view where the basemap only has room to draw continent-scale labels --
+  // city/state/country names render normally once there's room for them.
+  map = L.map("map", { worldCopyJump: true }).setView([20, 0], 3);
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
     attribution: "&copy; OpenStreetMap &copy; CARTO",
     subdomains: "abcd",
     maxZoom: 19,
