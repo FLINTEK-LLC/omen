@@ -1,0 +1,25 @@
+# Build artifacts
+/bin/
+/dist/
+/omen
+/omen.exe
+
+# Runtime data
+/data/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+kev-cache.json
+
+# Config with secrets
+config.yaml
+.env
+
+# IDE / OS
+.vscode/
+.idea/
+.claude/
+*.swp
+.DS_Store
+Thumbs.db

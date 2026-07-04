@@ -1,0 +1,33 @@
+# Copy this file to config.yaml and adjust as needed.
+# Secrets (Shodan API key) can also be supplied via the SHODAN_API_KEY
+# environment variable, which takes precedence over this file -- preferred
+# for container deployments so the key doesn't need to live on disk.
+
+server:
+  listen_addr: ":8080"
+
+database:
+  path: "./data/omen.db"
+
+poll:
+  victims_interval: "30m"
+  groups_interval: "24h"
+  kev_interval: "24h"
+
+ransomwarelive:
+  base_url: "https://api.ransomware.live/v2"
+
+shodan:
+  # Leave blank to disable Shodan enrichment (a no-op enricher is used
+  # instead, so the rest of the pipeline still runs without a key).
+  api_key: ""
+  rate_limit_interval: "1s"
+
+kev:
+  cache_path: "./data/kev-cache.json"
+  feed_url: "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json"
+
+watchlist:
+  # Default webhook URL used for watchlist entries that don't specify their
+  # own notify_via (e.g. Slack/Teams/n8n incoming webhook).
+  default_notify_via: ""

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OMEN — Ransomware CTI</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">OMEN</div>
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="map">Live Map</button>
+      <button class="tab-btn" data-tab="watchlist">Watchlist</button>
+    </nav>
+    <div class="stats" id="stats-summary"></div>
+  </header>
+
+  <main>
+    <section id="tab-map" class="tab-panel active">
+      <div id="map"></div>
+      <aside id="sidebar">
+        <h2>Recent Victims</h2>
+        <ul id="victim-list"></ul>
+      </aside>
+    </section>
+
+    <section id="tab-watchlist" class="tab-panel">
+      <h2>Watchlist</h2>
+      <form id="watchlist-form">
+        <input type="text" id="wl-pattern" placeholder="Pattern (org name or domain substring)" required />
+        <input type="text" id="wl-label" placeholder="Label (e.g. Client: Acme Corp)" />
+        <input type="text" id="wl-notify" placeholder="Notify webhook URL (optional, uses default if blank)" />
+        <button type="submit">Add</button>
+      </form>
+      <table id="watchlist-table">
+        <thead>
+          <tr><th>Pattern</th><th>Label</th><th>Notify Via</th><th></th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>

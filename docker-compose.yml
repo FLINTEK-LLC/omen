@@ -1,0 +1,20 @@
+services:
+  omen:
+    build: .
+    image: omen:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - omen-data:/app/data
+      # Uncomment to use a custom config instead of the bundled sample
+      # (cp config.sample.yaml config.yaml and edit it first):
+      # - ./config.yaml:/app/config.yaml:ro
+    environment:
+      # Preferred way to supply the Shodan key -- avoids putting it in
+      # config.yaml. Leave unset to run with Shodan enrichment disabled.
+      SHODAN_API_KEY: "${SHODAN_API_KEY:-}"
+    # command: ["-config", "/app/config.yaml"]  # use with the mount above
+    restart: unless-stopped
+
+volumes:
+  omen-data:
