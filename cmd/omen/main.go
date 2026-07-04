@@ -94,6 +94,7 @@ func main() {
 	defer stop()
 
 	go poller.Run(ctx)
+	go ingest.BackfillMonths(ctx, source, st, *cfg.Poll.BackfillMonths)
 	go runKEVRefreshLoop(ctx, kevCatalog, cfg.Poll.KEVInterval.Duration)
 
 	httpServer := &http.Server{

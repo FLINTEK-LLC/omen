@@ -41,6 +41,24 @@ func (c *RansomwareLiveClient) FetchRecentVictims(ctx context.Context) ([]store.
 	return victims, nil
 }
 
+// FetchVictimsByMonth retrieves all victims disclosed in the given
+// year/month from /victims/{year}/{month}. Unlike FetchRecentVictims (a
+// rolling window capped at 100 records), this endpoint returns the full set
+// for that month, so it's the source used for historical backfill.
+func (c *RansomwareLiveClient) FetchVictimsByMonth(ctx context.Context, year int, month time.Month) ([]store.Victim, error) {
+	var raw []map[string]any
+	path := fmt.Sprintf("/victims/%d/%d", year, int(month))
+	if err := c.getJSON(ctx, path, &raw); err != nil {
+		return nil, fmt.Errorf("fetch victims for %d-%02d: %w", year, month, err)
+	}
+
+	victims := make([]store.Victim, 0, len(raw))
+	for _, r := range raw {
+		victims = append(victims, victimFromRaw(r))
+	}
+	return victims, nil
+}
+
 // FetchGroups retrieves the full list of tracked ransomware groups from
 // /groups.
 func (c *RansomwareLiveClient) FetchGroups(ctx context.Context) ([]store.Group, error) {

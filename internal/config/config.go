@@ -40,6 +40,9 @@ type Config struct {
 		VictimsInterval Duration `yaml:"victims_interval"`
 		GroupsInterval  Duration `yaml:"groups_interval"`
 		KEVInterval     Duration `yaml:"kev_interval"`
+		// BackfillMonths is a pointer so an explicit "0" (disable backfill)
+		// can be distinguished from "unset" (apply the default).
+		BackfillMonths *int `yaml:"backfill_months"`
 	} `yaml:"poll"`
 
 	RansomwareLive struct {
@@ -98,6 +101,10 @@ func applyDefaults(cfg *Config) {
 	}
 	if cfg.Poll.KEVInterval.Duration == 0 {
 		cfg.Poll.KEVInterval.Duration = 24 * time.Hour
+	}
+	if cfg.Poll.BackfillMonths == nil {
+		defaultMonths := 3
+		cfg.Poll.BackfillMonths = &defaultMonths
 	}
 	if cfg.RansomwareLive.BaseURL == "" {
 		cfg.RansomwareLive.BaseURL = "https://api.ransomware.live/v2"

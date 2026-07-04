@@ -13,6 +13,14 @@ poll:
   victims_interval: "30m"
   groups_interval: "24h"
   kev_interval: "24h"
+  # Number of past months (including the current one) to backfill once at
+  # startup from /victims/{year}/{month}, which returns full monthly victim
+  # counts rather than /recentvictims' rolling 100-record window. Runs again
+  # on every restart (cheap: already-seen victims are just re-upserted, no
+  # re-enrichment or re-notification), throttled to Ransomware.live's 1
+  # request/minute-per-endpoint rate limit, so raising this adds roughly a
+  # minute of startup time per extra month. Set to 0 to disable.
+  backfill_months: 3
 
 ransomwarelive:
   base_url: "https://api.ransomware.live/v2"
